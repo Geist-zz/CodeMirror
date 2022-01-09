@@ -80,8 +80,20 @@
     if (data.rects == null && data.mouseX != null) {
       data.rects = [];
       if (cm.somethingSelected()) {
-        for (var sel = cm.display.selectionDiv.firstChild; sel; sel = sel.nextSibling)
-          data.rects.push(sel.getBoundingClientRect());
+        var sel = cm.display.selectionDiv.firstChild
+        if (sel)
+        {
+          for (var sel = cm.display.selectionDiv.firstChild; sel; sel = sel.nextSibling)
+            data.rects.push(sel.getBoundingClientRect());
+        }
+        else
+        {
+          // assumption - only one selection
+          // selection start
+          data.rects.push(cm.cursorCoords(true));
+          // selection end
+          data.rects.push(cm.cursorCoords(false));
+        }
       }
     }
     var inside = false;
