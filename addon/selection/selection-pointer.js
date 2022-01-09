@@ -86,20 +86,64 @@
 		    	data.rects.push(sel.getBoundingClientRect());
 			  }
 		    else {
-          
-          //TODO: multiline/wrap
-		    	const selection=cm.doc.sel.ranges[0];
+          const selection=cm.doc.sel.ranges[0];
 		    	var selstart=selection.anchor;
 		    	var selend=selection.head;
+		    	var multiline=false;
 		    	
-		    	if (selstart.ch > selend.ch) {
+		    	function getRect(selstart, selend)
+		    	{  	
+		    		const rect=cm.charCoords(selstart,"window");
+		    		rect.right=cm.charCoords(selend,"window").left;
+		    		
+		    		return rect;
+		    	}
+
+          //reverse order if needed
+		    	if (selstart.line != selend.line)
+		    	{
+		    		multiline=true;
+		    		if (selstart.line > selend.line)
+			    	{
+			    		selstart=selection.head;
+			    		selend=selection.anchor;
+			    	}
+		    	}
+		    	else if (selstart.ch > selend.ch)
+		    	{
 		    		selstart=selection.head;
 		    		selend=selection.anchor;
 		    	}
 		    	
-		    	const rect=cm.charCoords(selstart,"window");	//cm.charCoords(selection.anchor);
-		    	rect.right=cm.charCoords(selend,"window").left;
-		    	data.rects.push(rect);
+		    	if (!multiline)
+		    		data.rects.push(getRect(selstart,selend));
+		    	else
+		    	{
+		    		//first line
+		    		var line=cm.getLine(selstart.line);
+		    		data.rects.push(getRect(selstart, CodeMirror.Pos(selstart.line,line.length)));
+		    		
+		    		//in-between lines
+		    		const times=selend.line-selstart.line-1;
+		    		if (times > 0)
+		    		{
+			    		var tmp=CodeMirror.Pos(selstart.line,0);
+				    	for (var i = 0; i < times; i++)
+				    	{
+				    		tmp.line++;
+				    		line=cm.getLine(tmp.line);
+				    		data.rects.push(getRect(tmp, CodeMirror.Pos(tmp.line,line.length)));
+				    	}
+		    		}
+			    	
+			    	//last line
+			    	line=cm.getLine(selend.line);
+		    		data.rects.push(getRect(CodeMirror.Pos(selend.line,0),selend));
+			    	
+		    	}
+		    	
+		    	//TODO: wrap
+		    	
 		    }
       }
     }
