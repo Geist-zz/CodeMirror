@@ -81,19 +81,26 @@
       data.rects = [];
       if (cm.somethingSelected()) {
         var sel = cm.display.selectionDiv.firstChild
-        if (sel)
-        {
-          for (var sel = cm.display.selectionDiv.firstChild; sel; sel = sel.nextSibling)
-            data.rects.push(sel.getBoundingClientRect());
-        }
-        else
-        {
-          // assumption - only one selection
-          // selection start
-          data.rects.push(cm.cursorCoords(true));
-          // selection end
-          data.rects.push(cm.cursorCoords(false));
-        }
+		    if (sel) {
+		      for (; sel; sel = sel.nextSibling)
+		    	data.rects.push(sel.getBoundingClientRect());
+			  }
+		    else {
+          
+          //TODO: multiline/wrap
+		    	const selection=cm.doc.sel.ranges[0];
+		    	var selstart=selection.anchor;
+		    	var selend=selection.head;
+		    	
+		    	if (selstart.ch > selend.ch) {
+		    		selstart=selection.head;
+		    		selend=selection.anchor;
+		    	}
+		    	
+		    	const rect=cm.charCoords(selstart,"window");	//cm.charCoords(selection.anchor);
+		    	rect.right=cm.charCoords(selend,"window").left;
+		    	data.rects.push(rect);
+		    }
       }
     }
     var inside = false;
