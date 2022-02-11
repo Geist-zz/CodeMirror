@@ -80,71 +80,8 @@
     if (data.rects == null && data.mouseX != null) {
       data.rects = [];
       if (cm.somethingSelected()) {
-        var sel = cm.display.selectionDiv.firstChild
-		    if (sel) {
-		      for (; sel; sel = sel.nextSibling)
-		    	data.rects.push(sel.getBoundingClientRect());
-			  }
-		    else {
-          const selection=cm.doc.sel.ranges[0];
-		    	var selstart=selection.anchor;
-		    	var selend=selection.head;
-		    	var multiline=false;
-		    	
-		    	function getRect(selstart, selend)
-		    	{  	
-		    		const rect=cm.charCoords(selstart,"window");
-		    		rect.right=cm.charCoords(selend,"window").left;
-		    		
-		    		return rect;
-		    	}
-
-          //reverse order if needed
-		    	if (selstart.line != selend.line)
-		    	{
-		    		multiline=true;
-		    		if (selstart.line > selend.line)
-			    	{
-			    		selstart=selection.head;
-			    		selend=selection.anchor;
-			    	}
-		    	}
-		    	else if (selstart.ch > selend.ch)
-		    	{
-		    		selstart=selection.head;
-		    		selend=selection.anchor;
-		    	}
-		    	
-		    	if (!multiline)
-		    		data.rects.push(getRect(selstart,selend));
-		    	else
-		    	{
-		    		//first line
-		    		var line=cm.getLine(selstart.line);
-		    		data.rects.push(getRect(selstart, CodeMirror.Pos(selstart.line,line.length)));
-		    		
-		    		//in-between lines
-		    		const times=selend.line-selstart.line-1;
-		    		if (times > 0)
-		    		{
-			    		var tmp=CodeMirror.Pos(selstart.line,0);
-				    	for (var i = 0; i < times; i++)
-				    	{
-				    		tmp.line++;
-				    		line=cm.getLine(tmp.line);
-				    		data.rects.push(getRect(tmp, CodeMirror.Pos(tmp.line,line.length)));
-				    	}
-		    		}
-			    	
-			    	//last line
-			    	line=cm.getLine(selend.line);
-		    		data.rects.push(getRect(CodeMirror.Pos(selend.line,0),selend));
-			    	
-		    	}
-		    	
-		    	//TODO: wrap
-		    	
-		    }
+        for (var sel = cm.display.selectionDiv.firstChild; sel; sel = sel.nextSibling)
+          data.rects.push(sel.getBoundingClientRect());
       }
     }
     var inside = false;
