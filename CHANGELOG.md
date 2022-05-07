@@ -1,3 +1,21 @@
+## 5.65.3 (2022-04-20)
+
+### Bug fixes
+
+Fix a crash that could occur when when marking text.
+
+[merge addon](https://codemirror.net/doc/manual.html#addon_merge): Add aria label to buttons.
+
+[groovy mode](https://codemirror.net/mode/groovy/index.html): Properly highlight interpolated variables.
+
+## 5.65.2 (2022-02-21)
+
+### Bug fixes
+
+[clike mode](https://codemirror.net/mode/clike/): Recognize triple quoted string in Java.
+
+[cypher mode](https://codemirror.net/mode/cypher/index.html): Fix handling of punctuation.
+
 ## 5.65.1 (2022-01-20)
 
 ### Bug fixes
